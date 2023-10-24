@@ -1,9 +1,32 @@
 import React from 'react';
 import './globals.css';
+import { Metadata } from 'next';
+import { IBM_Plex_Mono } from 'next/font/google';
 
-export const metadata = {
-  title: '',
+const ibmPlexMono = IBM_Plex_Mono({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-ibm-plex-mono',
+});
+
+export const metadata: Metadata = {
+  title: 'FindIT',
   description: '',
+  icons: [
+    {
+      rel: 'icon',
+      type: 'image/svg+xml',
+      sizes: '300x300',
+      url: '/icons/icon.svg',
+    },
+    {
+      rel: 'apple-touch-icon',
+      type: 'image/svg+xml',
+      sizes: '300x300',
+      url: '/icons/icon.svg',
+    },
+  ],
 };
 
 export default async function RootLayout({
@@ -12,7 +35,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru">
+    <html lang="ru" className={`${ibmPlexMono.variable}`}>
       <body>{children}</body>
     </html>
   );

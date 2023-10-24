@@ -1,7 +1,5 @@
-export default async function Home() {
-  return (
-    <div>
-      <h1 className="text-5xl">Home</h1>
-    </div>
-  );
+import HomeScreen from '../client/screens/home/home.screen';
+
+export default async function HomePage() {
+  return <HomeScreen />;
 }
