@@ -17,11 +17,28 @@ export class UsersService {
     return await user.save();
   }
 
-  async findAll(options?: FindManyOptions<User>): Promise<User[]> {
-    return await this.usersRepository.find(options);
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.findOneById(id);
+    user.username = updateUserDto.username;
+    user.password = updateUserDto.password;
+    user.email = updateUserDto.email;
+    return await user.save();
   }
 
-  async findById(id: string): Promise<User | null> {
+  async remove(id: string): Promise<'Success' | 'Fail'> {
+    const user = await this.usersRepository.findOne({ where: { id: id } });
+    user.profile.profileToProjects.map(async (e) => {
+      if ('owner' in e.roles) await e.project.remove();
+      await e.remove();
+    });
+    await user.profile.remove();
+    await user.remove();
+    if ((await this.usersRepository.findOne({ where: { id: id } })) === null)
+      return 'Success';
+    return 'Fail';
+  }
+
+  async findOneById(id: string): Promise<User | null> {
     return await this.usersRepository.findOne({ where: { id: id } });
   }
 
@@ -29,18 +46,7 @@ export class UsersService {
     return await this.usersRepository.findOne(options);
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.findById(id);
-    user.username = updateUserDto.username;
-    user.password = updateUserDto.password;
-    user.email = updateUserDto.email;
-    return await user.save();
-  }
-
-  async remove(): Promise<void> {
-    for (let i = 0; i < (await this.findAll()).length; i++) {
-      await (await this.findAll())[i].profile.remove();
-      await (await this.findAll())[i].remove();
-    }
+  async findAll(options?: FindManyOptions<User>): Promise<User[]> {
+    return await this.usersRepository.find(options);
   }
 }
