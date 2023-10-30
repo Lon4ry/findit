@@ -12,10 +12,12 @@ import { RenderModule } from 'nest-next';
 import Next from 'next';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ServeStaticConfigAsync } from '../configs/serve-static.config';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    PassportModule.register({ session: true }),
     TypeOrmModule.forRootAsync(TypeOrmConfigAsync),
     UsersModule,
     ProfilesModule,

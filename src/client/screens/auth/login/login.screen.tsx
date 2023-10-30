@@ -12,14 +12,33 @@ export default function LoginScreen() {
         }
       >
         <div className={'w-1/3'}>
-          <div className={'bg-white rounded-xl border shadow'}>
+          <div className={'bg-white rounded-xl border shadow-xl'}>
             <div className={'w-full flex flex-col p-5'}>
               <h1 className={'text-center text-2xl my-4'}>Войдите с помощью</h1>
-              <div className={'flex flex-row flex-nowrap gap-1 px-10'}>
+              <div
+                className={
+                  'flex flex-row flex-nowrap justify-center gap-3 px-10'
+                }
+              >
                 <LoginWithButton
-                  src={'/icons/google.svg'}
+                  src={'/icons/auth/apple.svg'}
+                  alt={'Apple'}
+                  action={() => router.push('/auth/oauth/apple-auth')}
+                />
+                <LoginWithButton
+                  src={'/icons/auth/google.svg'}
                   alt={'Google'}
-                  action={() => router.push('/auth/oauth/google-auth', {})}
+                  action={() => router.push('/auth/oauth/google-auth')}
+                />
+                <LoginWithButton
+                  src={'/icons/auth/yandex.svg'}
+                  alt={'Яндекс'}
+                  action={() => router.push('/auth/oauth/yandex-auth')}
+                />
+                <LoginWithButton
+                  src={'/icons/auth/github.svg'}
+                  alt={'Github'}
+                  action={() => router.replace('/auth/oauth/github-auth')}
                 />
               </div>
               <div className="inline-flex items-center justify-center w-full mt-10 mb-4">

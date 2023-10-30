@@ -16,7 +16,9 @@ export default function LoginWithButton({
       onClick={action}
     >
       <div className={'w-6 h-6'}>
-        <Image width={48} height={48} src={src} alt={alt} />
+        <div className={'w-full h-full'}>
+          <Image width={1000000} height={1000000} src={src} alt={alt} />
+        </div>
       </div>
     </button>
   );

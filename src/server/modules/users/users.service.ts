@@ -18,7 +18,7 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.findOneById(id);
+    const user = await this.findById(id);
     user.username = updateUserDto.username;
     user.password = updateUserDto.password;
     user.email = updateUserDto.email;
@@ -38,7 +38,7 @@ export class UsersService {
     return 'Fail';
   }
 
-  async findOneById(id: string): Promise<User | null> {
+  async findById(id: string): Promise<User | null> {
     return await this.usersRepository.findOne({ where: { id: id } });
   }
 
