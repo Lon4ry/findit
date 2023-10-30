@@ -26,6 +26,14 @@ export class User extends BaseEntity {
   @Column({ default: 'user' })
   role: string;
 
+  @Column('simple-json', { default: {} })
+  linkedAccounts: {
+    apple: string;
+    google: string;
+    yandex: string;
+    github: string;
+  };
+
   @UpdateDateColumn()
   updatedAt: Date;
 

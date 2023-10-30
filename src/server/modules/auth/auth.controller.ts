@@ -12,6 +12,7 @@ export class AuthController {
     return res.render('/auth');
   }
 
+  // TODO: Redirect
   @Get('oauth/apple-auth')
   @UseGuards(AppleAuthGuard)
   appleAuth() {}

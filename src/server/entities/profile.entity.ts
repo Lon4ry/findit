@@ -28,6 +28,9 @@ export class Profile extends BaseEntity {
     test: number;
   };
 
+  @Column('simple-json', { default: {} })
+  links: { github: string };
+
   @Column({ nullable: true })
   photo: string;
 

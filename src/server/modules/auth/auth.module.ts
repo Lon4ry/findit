@@ -1,13 +1,23 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
-import { GoogleStrategy } from './strategies/google.strategy';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { AuthSerializer } from './auth.serializer';
+import { GoogleStrategy } from './strategies/google.strategy';
+import { YandexStrategy } from './strategies/yandex.strategy';
+import { GithubStrategy } from './strategies/github.strategy';
 
 @Module({
   imports: [UsersModule],
-  providers: [AuthService, AuthSerializer, GoogleStrategy],
+  providers: [
+    AuthService,
+    AuthSerializer,
+    // TODO: Apple auth strategy
+    // AppleStrategy,
+    GoogleStrategy,
+    YandexStrategy,
+    GithubStrategy,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

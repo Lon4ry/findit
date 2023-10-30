@@ -21,5 +21,8 @@ async function bootstrap() {
   app.use(passport.initialize());
 
   await app.listen(80);
+
+  // TODO: Profile creating using known data when logging in through an external service
+  // TODO: Profile pages
 }
 bootstrap();
