@@ -2,6 +2,7 @@ import React from 'react';
 import './globals.css';
 import { Metadata } from 'next';
 import { IBM_Plex_Mono } from 'next/font/google';
+import CopyrightComponent from '../client/components/copyright.component';
 
 const ibmPlexMono = IBM_Plex_Mono({
   weight: '400',
@@ -36,7 +37,10 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="ru" className={`${ibmPlexMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <CopyrightComponent />
+      </body>
     </html>
   );
 }

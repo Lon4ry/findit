@@ -1,6 +1,6 @@
-import LogoComponent from '../../components/logo.component';
+import LogoComponent from './logo.component';
 
-export default function HomeMobileLogo() {
+export default function LogoMobileComponent() {
   return (
     <header className={'visible md:invisible'}>
       <div className={'fixed w-full'}>

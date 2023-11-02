@@ -2,7 +2,7 @@ export default function HomeDescription() {
   return (
     <p
       className={
-        'mt-20 font-ibmPlexMono text-lg sm:text-lg md:text-xl lg:text-2xl xl:text-3xl tracking-tight'
+        'font-ibmPlexMono text-lg sm:text-lg md:text-xl lg:text-2xl xl:text-3xl tracking-tight'
       }
     >
       Теперь вы точно сможете найти своих единомышленников для своих IT идей

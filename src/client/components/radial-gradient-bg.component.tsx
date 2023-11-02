@@ -4,11 +4,11 @@ import styles from './radial-gradient-bg.module.scss';
 import { Transition } from '@headlessui/react';
 
 export default function RadialGradientBg() {
+  const [show, setShow] = useState(true);
   const gradientOpacityAnimation = {
     from: 'opacity-[30%]',
     to: 'opacity-[60%]',
   };
-  const [show, setShow] = useState(true);
   return (
     <Transition
       as={Fragment}

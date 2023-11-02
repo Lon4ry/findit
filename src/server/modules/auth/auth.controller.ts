@@ -7,9 +7,13 @@ import { YandexAuthGuard } from './guards/yandex-auth.guard';
 
 @Controller('auth')
 export class AuthController {
-  @Get()
-  authPage(@Res() res: RenderableResponse) {
-    return res.render('/auth');
+  @Get('login')
+  loginPage(@Res() res: RenderableResponse) {
+    return res.render('/auth/login');
+  }
+  @Get('registration')
+  registrationPage(@Res() res: RenderableResponse) {
+    return res.render('/auth/registration');
   }
 
   // TODO: Redirect
