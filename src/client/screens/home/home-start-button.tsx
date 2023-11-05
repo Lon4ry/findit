@@ -1,4 +1,4 @@
-import { ButtonProps } from '../../types/button-props.type';
+import { ButtonProps } from '../../components/input-components/button-props.type';
 import { useRouter } from 'next/navigation';
 
 export default function HomeStartButton({ handleClick }: ButtonProps) {

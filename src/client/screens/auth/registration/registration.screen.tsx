@@ -5,11 +5,18 @@ import { Transition } from '@headlessui/react';
 import { useRouter } from 'next/navigation';
 import CreateProfileWarning from './create-profile/create-profile-warning';
 import CreateProfileUsername from './create-profile/create-profile-username';
+import CreateProfileName from './create-profile/create-profile-name';
+import CreateProfileSkills from './create-profile/create-profile-skills';
+import CreateProfileGender from './create-profile/create-profile-gender';
+import { z } from 'zod';
 
 export default function RegistrationScreen() {
   const [show, setShow] = useState(true);
   const [step, setStep] = useState(0);
   const router = useRouter();
+
+  const regFormValidation = z.object({});
+
   return (
     <Transition
       as={Fragment}
@@ -24,7 +31,7 @@ export default function RegistrationScreen() {
       afterLeave={() => router.replace('/auth/login')}
     >
       <div className={'fixed w-full h-full bg-white'}>
-        <div className={'w-full h-full flex justify-center items-center'}>
+        <form className={'w-full h-full flex justify-center items-center'}>
           <CreateProfileWarning step={step} />
           <CreateProfileIntroduce
             step={step}
@@ -32,7 +39,10 @@ export default function RegistrationScreen() {
             backButtonAction={() => setShow(false)}
           />
           <CreateProfileUsername step={step} nextStep={() => setStep(2)} />
-        </div>
+          <CreateProfileName step={step} nextStep={() => setStep(3)} />
+          <CreateProfileSkills step={step} nextStep={() => setStep(4)} />
+          <CreateProfileGender step={step} nextStep={() => setStep(-1)} />
+        </form>
       </div>
     </Transition>
   );

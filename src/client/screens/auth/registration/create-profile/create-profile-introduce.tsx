@@ -1,6 +1,6 @@
 import { Transition } from '@headlessui/react';
 import { Fragment } from 'react';
-import { CreateProfileProps } from './create-profile.type';
+import { CreateProfileProps } from './create-profile-props.type';
 
 type CreateProfileIntroduceProps = CreateProfileProps & {
   backButtonAction?: () => void;
@@ -24,15 +24,13 @@ export default function CreateProfileIntroduce({
       leaveTo={'-translate-x-[300%] blur'}
     >
       <div className={'flex flex-col gap-5'}>
-        <h2 className={'font-bold text-4xl'}>Давайте познакомимся</h2>
+        <h2 className={'font-bold text-4xl'}>Давай познакомимся</h2>
         <div className={'flex flex-col flex-nowrap gap-3'}>
           <button
             className={
               'w-full bg-blue-600 rounded p-2 text-white transition ease-in-out hover:bg-blue-700'
             }
-            onClick={() => {
-              nextStep();
-            }}
+            onClick={nextStep}
           >
             Продолжить
           </button>

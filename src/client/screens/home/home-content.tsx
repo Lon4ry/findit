@@ -15,7 +15,7 @@ export default function HomeContent() {
       show={show}
       leave="transition ease-in-out duration-[450ms] transform-gpu"
       leaveFrom={'translate-x-0 filter-none'}
-      leaveTo={'-translate-x-[300%] blur'}
+      leaveTo={'-translate-x-[300%] backdrop-blur'}
       afterLeave={() => router.push('/auth/login')}
     >
       <div

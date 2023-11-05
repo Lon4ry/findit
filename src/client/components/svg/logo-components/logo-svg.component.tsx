@@ -1,4 +1,6 @@
-export default function LogoComponent() {
+import { SvgComponentProps } from '../svg-component-props.type';
+
+export default function LogoSvgComponent({ className }: SvgComponentProps) {
   return (
     <svg
       width="474"
@@ -6,7 +8,7 @@ export default function LogoComponent() {
       viewBox="0 0 474 155"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={'w-full'}
+      className={`w-full ${className}`}
     >
       <g filter="url(#filter0_d_61_273)">
         <path
