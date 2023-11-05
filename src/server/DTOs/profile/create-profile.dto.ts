@@ -1,10 +1,17 @@
+import { User } from '../../entities/user.entity';
+
 export class CreateProfileDto {
   name: {
     firstName: string;
     lastName: string;
   };
-
-  gender: null | string;
-
-  userId: string;
+  skills: {
+    Backend: number;
+    Frontend: number;
+    MachineLearning: number;
+    DevOps: number;
+    QA: number;
+  };
+  gender: 'Male' | 'Female';
+  user: User;
 }

@@ -6,20 +6,27 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/outline';
 export default function CreateProfileGender({
   step,
   nextStep,
-}: CreateProfileProps) {
+  setValue,
+  isSubmitting,
+}: Omit<CreateProfileProps, 'error' | 'isTouched' | 'register'> & {
+  setValue: (key: string, value: string) => void;
+}) {
   const genders = [
     { id: 'Male', value: 'Парень' },
     { id: 'Female', value: 'Девушка' },
   ];
   const [selectedGender, setSelectedGender] = useState({
-    id: null,
-    value: null,
+    id: '',
+    value: '',
   });
+
+  setValue('profile.gender', selectedGender.id);
+
   return (
     <Transition
       as={Fragment}
       appear={true}
-      show={step === 4}
+      show={step === 5}
       enter="transition ease-in-out duration-[450ms] transform-gpu"
       enterFrom={'translate-x-[300%] blur'}
       enterTo={'translate-x-0 filter-none'}
@@ -86,8 +93,10 @@ export default function CreateProfileGender({
           </Transition>
         </Listbox>
         <button
+          disabled={selectedGender.id === '' || isSubmitting}
+          type={'button'}
           className={
-            'w-1/2 bg-blue-600 rounded p-2 text-white transition ease-in-out hover:bg-blue-700'
+            'w-1/2 bg-blue-600 rounded p-2 text-white transition ease-in-out hover:bg-blue-700 disabled:bg-gray-500'
           }
           onClick={nextStep}
         >

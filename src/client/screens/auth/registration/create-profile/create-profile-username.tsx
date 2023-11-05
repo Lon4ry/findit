@@ -6,6 +6,10 @@ import SplitInputTextComponent from '../../../../components/input-components/spl
 export default function CreateProfileUsername({
   step,
   nextStep,
+  error,
+  register,
+  isTouched,
+  isSubmitting,
 }: CreateProfileProps) {
   return (
     <Transition
@@ -23,7 +27,14 @@ export default function CreateProfileUsername({
         <h2 className={'font-bold text-4xl px-5 text-center'}>
           Давай определимся с публичным именем
         </h2>
-        <SplitInputTextComponent handleClick={nextStep} />
+        <SplitInputTextComponent
+          name={'user.username'}
+          isTouched={isTouched}
+          isSubmitting={isSubmitting}
+          register={register}
+          error={error}
+          handleClick={nextStep}
+        />
       </div>
     </Transition>
   );

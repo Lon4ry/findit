@@ -15,7 +15,7 @@ export default function CreateProfileName({
     <Transition
       as={Fragment}
       appear={true}
-      show={step === 2}
+      show={step === 3}
       enter="transition ease-in-out duration-[450ms] transform-gpu"
       enterFrom={'translate-x-[300%] blur'}
       enterTo={'translate-x-0 filter-none'}
@@ -25,10 +25,10 @@ export default function CreateProfileName({
     >
       <div className={'flex flex-col gap-5 w-1/3'}>
         <h2 className={'font-bold text-4xl px-5 text-center'}>
-          А что насчет настоящего имени?
+          Укажите вашу почту, чтобы мы смогли с вами связаться
         </h2>
         <SplitInputTextComponent
-          name={'profile.name'}
+          name={'user.email'}
           register={register}
           isSubmitting={isSubmitting}
           isTouched={isTouched}

@@ -23,9 +23,11 @@ export class Profile extends BaseEntity {
 
   @Column('simple-json')
   skills: {
-    backend: number;
-    frontend: number;
-    test: number;
+    Backend: number;
+    Frontend: number;
+    MachineLearning: number;
+    DevOps: number;
+    QA: number;
   };
 
   @Column('simple-json', { default: {} })
@@ -34,13 +36,13 @@ export class Profile extends BaseEntity {
   @Column({ nullable: true })
   photo: string;
 
-  @Column({ nullable: true })
+  @Column()
   gender: string;
 
   @Column({ default: '' })
   status: string;
 
-  @Column()
+  @Column({ nullable: true })
   lastLogin: Date;
 
   @OneToOne(() => User, (user) => user.profile)

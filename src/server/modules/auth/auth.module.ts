@@ -6,9 +6,10 @@ import { AuthSerializer } from './auth.serializer';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { YandexStrategy } from './strategies/yandex.strategy';
 import { GithubStrategy } from './strategies/github.strategy';
+import { ProfilesModule } from '../profiles/profiles.module';
 
 @Module({
-  imports: [UsersModule],
+  imports: [UsersModule, ProfilesModule],
   providers: [
     AuthService,
     AuthSerializer,

@@ -6,7 +6,7 @@ export class UpdateProfileDto {
 
   photo: string;
 
-  gender: null | string;
+  gender: string;
 
   status: string;
 }
