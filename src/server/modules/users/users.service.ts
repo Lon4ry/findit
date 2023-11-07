@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { UpdateUserDto } from '../../DTOs/user/update-user.dto';
 import { CreateUserDto } from '../../DTOs/user/create-user.dto';
+import { hash } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -20,9 +21,12 @@ export class UsersService {
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findById(id);
     user.username = updateUserDto.username;
-    user.password = updateUserDto.password;
+    user.password = await hash(updateUserDto.password, 10);
     user.email = updateUserDto.email;
-    return await user.save();
+    const updatedUser = await user.save();
+    delete updatedUser.password;
+
+    return updatedUser;
   }
 
   async remove(id: string): Promise<'Success' | 'Fail'> {
@@ -38,15 +42,32 @@ export class UsersService {
     return 'Fail';
   }
 
-  async findById(id: string): Promise<User | null> {
-    return await this.usersRepository.findOne({ where: { id: id } });
-  }
-
-  async findOne(options?: FindOneOptions<User>): Promise<User | null> {
+  async findOneWithPassword(
+    options?: FindOneOptions<User>,
+  ): Promise<User | null> {
     return await this.usersRepository.findOne(options);
   }
 
+  async findById(id: string): Promise<User | null> {
+    const user = await this.usersRepository.findOne({
+      where: { id: id },
+    });
+    if (user) delete user.password;
+
+    return user;
+  }
+
+  async findOne(options?: FindOneOptions<User>): Promise<User | null> {
+    const user = await this.usersRepository.findOne(options);
+    if (user) delete user.password;
+
+    return user;
+  }
+
   async findAll(options?: FindManyOptions<User>): Promise<User[]> {
-    return await this.usersRepository.find(options);
+    const users = await this.usersRepository.find(options);
+    if (users.length > 0) users.forEach((user) => delete user.password);
+
+    return users;
   }
 }

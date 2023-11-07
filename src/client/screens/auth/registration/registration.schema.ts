@@ -27,6 +27,14 @@ export const registrationSchema = z.object({
         (field) => /[!@#$%^&*()\-+=]/.test(field),
         'Используйте хотя бы один специальный символ',
       ),
+    linkedAccounts: z
+      .object({
+        apple: z.string().optional(),
+        google: z.string().optional(),
+        yandex: z.string().optional(),
+        github: z.string().optional(),
+      })
+      .optional(),
   }),
 
   profile: z.object({

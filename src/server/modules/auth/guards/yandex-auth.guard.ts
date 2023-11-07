@@ -6,7 +6,17 @@ export class YandexAuthGuard extends AuthGuard('yandex') {
   async canActivate(context: ExecutionContext) {
     const activate = (await super.canActivate(context)) as boolean;
     const request = context.switchToHttp().getRequest();
-    await super.logIn(request);
+    const response = context.switchToHttp().getResponse();
+    if (request.user.type === 'User') {
+      request.user = request.user.payload;
+      await super.logIn(request);
+    } else {
+      const defaultValues = request.user.payload;
+      const query = defaultValues
+        ? `/?data=${JSON.stringify(defaultValues)}`
+        : null;
+      response.redirect('/auth/registration' + query);
+    }
     return activate;
   }
 }

@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import { Profile, Strategy } from 'passport-github';
 import { AuthService } from '../auth.service';
-import { User } from '../../../entities/user.entity';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
@@ -22,7 +21,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     accessToken: string,
     refreshToken: string,
     profile: Profile,
-  ): Promise<User | null> {
+  ): Promise<unknown> {
     return this.authService.oauthValidate(profile);
   }
 }

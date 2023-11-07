@@ -9,13 +9,18 @@ export class AuthSerializer extends PassportSerializer {
     super();
   }
 
-  serializeUser(user: User, done: (err: Error, payload: string) => void): void {
-    done(null, user.id);
+  serializeUser(
+    user: User,
+    done: (err: Error, payload: { id: string; role: string }) => void,
+  ): void {
+    done(null, { id: user.id, role: user.role });
   }
 
-  async deserializeUser(id: string, done: (err: Error, user: User) => void) {
-    const user = await this.usersService.findById(id);
-
+  async deserializeUser(
+    payload: { id: string; role: string },
+    done: (err: Error, user: User) => void,
+  ) {
+    const user = await this.usersService.findById(payload.id);
     done(null, user);
   }
 }

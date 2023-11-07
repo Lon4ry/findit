@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import { Profile, Strategy } from 'passport-yandex';
 import { AuthService } from '../auth.service';
-import { User } from '../../../entities/user.entity';
 
 @Injectable()
 export class YandexStrategy extends PassportStrategy(Strategy, 'yandex') {
@@ -22,7 +21,7 @@ export class YandexStrategy extends PassportStrategy(Strategy, 'yandex') {
     accessToken: string,
     refreshToken: string,
     profile: Profile,
-  ): Promise<User | null> {
+  ): Promise<unknown> {
     return this.authService.oauthValidate(profile);
   }
 }

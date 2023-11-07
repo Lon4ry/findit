@@ -25,7 +25,7 @@ export default function CreateProfileName({
     >
       <div className={'flex flex-col gap-5 w-1/3'}>
         <h2 className={'font-bold text-4xl px-5 text-center'}>
-          Укажите вашу почту, чтобы мы смогли с вами связаться
+          Укажи свою почту, чтобы мы смогли связаться с тобой
         </h2>
         <SplitInputTextComponent
           name={'user.email'}

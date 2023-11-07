@@ -8,17 +8,23 @@ export default function CreateProfileGender({
   nextStep,
   setValue,
   isSubmitting,
+  defaultValue,
 }: Omit<CreateProfileProps, 'error' | 'isTouched' | 'register'> & {
   setValue: (key: string, value: string) => void;
+  defaultValue?: string;
 }) {
   const genders = [
     { id: 'Male', value: 'Парень' },
     { id: 'Female', value: 'Девушка' },
   ];
-  const [selectedGender, setSelectedGender] = useState({
-    id: '',
-    value: '',
-  });
+  const [selectedGender, setSelectedGender] = useState(
+    defaultValue
+      ? genders.find((gender) => gender.id === defaultValue)
+      : {
+          id: '',
+          value: '',
+        },
+  );
 
   setValue('profile.gender', selectedGender.id);
 

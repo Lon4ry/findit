@@ -22,6 +22,8 @@ export default class TypeOrmConfig {
 
       retryAttempts: 5,
       retryDelay: 3000,
+
+      logger: 'file',
     };
   }
 }

@@ -7,12 +7,14 @@ import { GoogleStrategy } from './strategies/google.strategy';
 import { YandexStrategy } from './strategies/yandex.strategy';
 import { GithubStrategy } from './strategies/github.strategy';
 import { ProfilesModule } from '../profiles/profiles.module';
+import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
   imports: [UsersModule, ProfilesModule],
   providers: [
     AuthService,
     AuthSerializer,
+    LocalStrategy,
     // TODO: Apple auth strategy
     // AppleStrategy,
     GoogleStrategy,

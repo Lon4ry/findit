@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import { Profile, Strategy } from 'passport-apple';
 import { AuthService } from '../auth.service';
-import { User } from '../../../entities/user.entity';
 
 @Injectable()
 export class AppleStrategy extends PassportStrategy(Strategy, 'apple') {
@@ -25,7 +24,7 @@ export class AppleStrategy extends PassportStrategy(Strategy, 'apple') {
     accessToken: string,
     refreshToken: string,
     profile: Profile,
-  ): Promise<User | null> {
+  ): Promise<unknown> {
     return this.authService.oauthValidate(profile);
   }
 }

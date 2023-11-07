@@ -4,12 +4,26 @@ import { Fragment, useState } from 'react';
 import LoginWithButton from './login-with-button';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useForm } from 'react-hook-form';
 
 export default function LoginContent() {
   const [show, setShow] = useState(true);
   const [showRegistration, switchToRegistration] = useState(false);
   const [url, setUrl] = useState('');
   const router = useRouter();
+
+  const { handleSubmit, register } = useForm();
+
+  const onSubmit = async (data) => {
+    const response = await fetch('/auth/login', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    if (response.status === 200) router.replace('/auth/who-am-i');
+  };
 
   const urls = [
     '/auth/oauth/apple-auth',
@@ -91,21 +105,27 @@ export default function LoginContent() {
               <hr className="w-2/3 h-px my-4 bg-gray-400 border-0" />
               <span className="absolute px-2 text-gray-900 bg-white">или</span>
             </div>
-            <div className={'w-full flex flex-col items-center px-20 gap-5'}>
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className={'w-full flex flex-col items-center px-20 gap-5'}
+            >
               <div className={'w-full'}>
                 <input
+                  {...register('uniq')}
                   type={'text'}
                   className={'w-full rounded border border-gray-400 py-1 px-2'}
                 />
               </div>
               <div className={'w-full'}>
                 <input
+                  {...register('password')}
                   type={'password'}
                   className={'w-full rounded border border-gray-400 py-1 px-2'}
                 />
               </div>
               <div className={'w-full flex flex-row-reverse gap-2'}>
                 <button
+                  type={'submit'}
                   className={
                     'rounded bg-blue-600 text-white py-2 w-full hover:bg-blue-700 transition ease-in-out'
                   }
@@ -113,6 +133,7 @@ export default function LoginContent() {
                   Продолжить
                 </button>
                 <button
+                  type={'button'}
                   className={
                     'rounded text-gray-500 bg-gray-100 py-2 w-full hover:bg-gray-200 transition ease-in-out'
                   }
@@ -121,7 +142,7 @@ export default function LoginContent() {
                   Регистрация
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>

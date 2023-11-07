@@ -4,7 +4,7 @@ import { RenderableResponse } from 'nest-next';
 @Controller()
 export class AppController {
   @Get()
-  homePage(@Res() res: RenderableResponse) {
+  async homePage(@Res() res: RenderableResponse) {
     return res.render('index');
   }
 }

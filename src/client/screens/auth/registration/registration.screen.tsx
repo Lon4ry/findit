@@ -1,4 +1,3 @@
-'use client';
 import CreateProfileIntroduce from './create-profile/create-profile-introduce';
 import { Fragment, useState } from 'react';
 import { Transition } from '@headlessui/react';
@@ -15,7 +14,11 @@ import CreateProfileWarning from './create-profile/create-profile-warning';
 import CreateProfileEmail from './create-profile/create-profile-email';
 import { instanceToPlain } from 'class-transformer';
 
-export default function RegistrationScreen() {
+export default function RegistrationScreen({
+  defaultValues,
+}: {
+  defaultValues?: RegistrationSchema;
+}) {
   const [show, setShow] = useState(true);
   const router = useRouter();
 
@@ -23,10 +26,12 @@ export default function RegistrationScreen() {
 
   const {
     setValue,
+    getValues,
     register,
     formState: { touchedFields, isSubmitting, errors },
     handleSubmit,
   } = useForm<RegistrationSchema>({
+    defaultValues: { ...defaultValues },
     mode: 'onTouched',
     resolver: zodResolver(registrationSchema),
   });
@@ -34,6 +39,7 @@ export default function RegistrationScreen() {
   const onSubmit: SubmitHandler<RegistrationSchema> = async (
     data: RegistrationSchema,
   ): Promise<void> => {
+    console.log('Submitting...', data);
     const [firstName, lastName] = data.profile.name.split(' ');
     const parsedData = instanceToPlain(data);
     parsedData.profile.name = { firstName: firstName, lastName: lastName };
@@ -45,7 +51,11 @@ export default function RegistrationScreen() {
       body: JSON.stringify(parsedData),
     });
     console.log(response.status);
+    console.log(await response.json());
+    if (response.status === 201) router.replace('/auth/who-am-i');
   };
+
+  const defaultRegistrationValues = getValues();
 
   return (
     <Transition
@@ -73,7 +83,12 @@ export default function RegistrationScreen() {
           <CreateProfileUsername
             isSubmitting={isSubmitting}
             register={register}
-            isTouched={touchedFields.user ? touchedFields.user.username : false}
+            isTouched={
+              (touchedFields.user ? touchedFields.user.username : false) ||
+              (defaultRegistrationValues.user
+                ? !!defaultRegistrationValues.user.username
+                : false)
+            }
             error={errors.user ? errors.user.username : null}
             step={step}
             nextStep={() => setStep(2)}
@@ -83,7 +98,10 @@ export default function RegistrationScreen() {
             isSubmitting={isSubmitting}
             register={register}
             isTouched={
-              touchedFields.profile ? touchedFields.profile.name : false
+              (touchedFields.profile ? touchedFields.profile.name : false) ||
+              (defaultRegistrationValues.profile
+                ? !!defaultRegistrationValues.profile.name
+                : false)
             }
             error={errors.profile ? errors.profile.name : null}
             step={step}
@@ -92,7 +110,12 @@ export default function RegistrationScreen() {
           <CreateProfileEmail
             isSubmitting={isSubmitting}
             register={register}
-            isTouched={touchedFields.user ? touchedFields.user.email : false}
+            isTouched={
+              (touchedFields.user ? touchedFields.user.email : false) ||
+              (defaultRegistrationValues.user
+                ? !!defaultRegistrationValues.user.email
+                : false)
+            }
             error={errors.user ? errors.user.email : null}
             step={step}
             nextStep={() => setStep(4)}
@@ -105,6 +128,11 @@ export default function RegistrationScreen() {
             nextStep={() => setStep(5)}
           />
           <CreateProfileGender
+            defaultValue={
+              defaultRegistrationValues.profile
+                ? defaultRegistrationValues.profile.gender
+                : ''
+            }
             setValue={setValue}
             isSubmitting={isSubmitting}
             step={step}

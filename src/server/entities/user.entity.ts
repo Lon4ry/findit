@@ -1,5 +1,6 @@
 import {
   BaseEntity,
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -8,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Profile } from './profile.entity';
+import { hash } from 'bcrypt';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -44,4 +46,9 @@ export class User extends BaseEntity {
     cascade: true,
   })
   profile: Profile;
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await hash(this.password, 10);
+  }
 }
