@@ -8,11 +8,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Profile } from './profile.entity';
+import { ProfileEntity } from './profile.entity';
 import { hash } from 'bcrypt';
 
 @Entity({ name: 'users' })
-export class User extends BaseEntity {
+export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -42,10 +42,10 @@ export class User extends BaseEntity {
   @CreateDateColumn({ update: false })
   createdAt: Date;
 
-  @OneToOne(() => Profile, (profile) => profile.user, {
+  @OneToOne(() => ProfileEntity, (profile) => profile.user, {
     cascade: true,
   })
-  profile: Profile;
+  profile: ProfileEntity;
 
   @BeforeInsert()
   async hashPassword() {

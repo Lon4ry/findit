@@ -1,4 +1,4 @@
-import { User } from '../../entities/user.entity';
+import { UserEntity } from '../../entities/user.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
@@ -9,16 +9,16 @@ import { hash } from 'bcrypt';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     const user = this.usersRepository.create(createUserDto);
     return await user.save();
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity> {
     const user = await this.findOne({
       where: { id: id },
       select: { password: true },
@@ -46,17 +46,19 @@ export class UsersService {
     return 'Fail';
   }
 
-  async findById(id: string): Promise<User | null> {
+  async findById(id: string): Promise<UserEntity | null> {
     return await this.usersRepository.findOne({
       where: { id: id },
     });
   }
 
-  async findOne(options?: FindOneOptions<User>): Promise<User | null> {
+  async findOne(
+    options?: FindOneOptions<UserEntity>,
+  ): Promise<UserEntity | null> {
     return await this.usersRepository.findOne(options);
   }
 
-  async findAll(options?: FindManyOptions<User>): Promise<User[]> {
+  async findAll(options?: FindManyOptions<UserEntity>): Promise<UserEntity[]> {
     return await this.usersRepository.find(options);
   }
 }

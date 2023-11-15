@@ -7,11 +7,11 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from './user.entity';
-import { ProjectsToProfiles } from './projects-to-profiles.entity';
+import { UserEntity } from './user.entity';
+import { ProjectsToProfilesEntity } from './projects-to-profiles.entity';
 
 @Entity({ name: 'profiles' })
-export class Profile extends BaseEntity {
+export class ProfileEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -46,10 +46,10 @@ export class Profile extends BaseEntity {
   @Column({ nullable: true })
   lastLogin: Date;
 
-  @OneToOne(() => User, (user) => user.profile)
+  @OneToOne(() => UserEntity, (user) => user.profile)
   @JoinColumn()
-  user: User;
+  user: UserEntity;
 
-  @OneToMany(() => ProjectsToProfiles, (e) => e.profile)
-  profileToProjects: ProjectsToProfiles[];
+  @OneToMany(() => ProjectsToProfilesEntity, (e) => e.profile)
+  profileToProjects: ProjectsToProfilesEntity[];
 }

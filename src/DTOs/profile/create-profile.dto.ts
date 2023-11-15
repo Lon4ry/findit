@@ -1,4 +1,4 @@
-import { User } from '../../entities/user.entity';
+import { UserEntity } from '../../entities/user.entity';
 
 export class CreateProfileDto {
   name: {
@@ -13,5 +13,5 @@ export class CreateProfileDto {
     QA: number;
   };
   gender: 'Male' | 'Female';
-  user: User;
+  user: UserEntity;
 }

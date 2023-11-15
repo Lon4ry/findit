@@ -6,14 +6,21 @@ import passport from 'passport';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = new ConfigService();
+
+  app.enableCors({
+    origin: configService.get('CLIENT_URL'),
+  });
 
   app.use(
     session({
-      secret: new ConfigService().get('SECRET'),
+      secret: configService.get('SECRET'),
       saveUninitialized: false,
       resave: false,
       cookie: {
+        signed: true,
         maxAge: 60000,
+        domain: 'localhost',
       },
     }),
   );
@@ -21,6 +28,6 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  await app.listen(2020);
+  await app.listen(3210);
 }
 bootstrap().then();

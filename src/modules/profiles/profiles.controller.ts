@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { Profile } from '../../entities/profile.entity';
+import { ProfileEntity } from '../../entities/profile.entity';
 import { ProfilesService } from './profiles.service';
 
 @Controller('api/profiles')
@@ -8,7 +8,7 @@ export class ProfilesController {
 
   @Get()
   async getProfiles(@Query() query: Record<string, string>): Promise<{
-    profiles: Profile[];
+    profiles: ProfileEntity[];
     length: number;
   }> {
     return await this.profilesService.findAndCount({

@@ -7,10 +7,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProjectsToProfiles } from './projects-to-profiles.entity';
+import { ProjectsToProfilesEntity } from './projects-to-profiles.entity';
 
 @Entity({ name: 'projects' })
-export class Project extends BaseEntity {
+export class ProjectEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -33,8 +33,8 @@ export class Project extends BaseEntity {
   @Column({ nullable: true })
   budget: string;
 
-  @OneToMany(() => ProjectsToProfiles, (e) => e.project)
-  projectToProfiles: ProjectsToProfiles[];
+  @OneToMany(() => ProjectsToProfilesEntity, (e) => e.project)
+  projectToProfiles: ProjectsToProfilesEntity[];
 
   @UpdateDateColumn()
   updatedAt: Date;

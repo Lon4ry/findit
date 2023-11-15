@@ -5,20 +5,20 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Profile } from './profile.entity';
-import { Project } from './project.entity';
+import { ProfileEntity } from './profile.entity';
+import { ProjectEntity } from './project.entity';
 
 @Entity({ name: 'projects-to-profiles' })
-export class ProjectsToProfiles extends BaseEntity {
+export class ProjectsToProfilesEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column('simple-array')
   roles: string[];
 
-  @ManyToOne(() => Profile, (e) => e.profileToProjects)
-  profile: Profile;
+  @ManyToOne(() => ProfileEntity, (e) => e.profileToProjects)
+  profile: ProfileEntity;
 
-  @ManyToOne(() => Project, (e) => e.projectToProfiles)
-  project: Project;
+  @ManyToOne(() => ProjectEntity, (e) => e.projectToProfiles)
+  project: ProjectEntity;
 }

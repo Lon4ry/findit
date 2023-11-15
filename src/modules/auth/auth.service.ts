@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { User } from '../../entities/user.entity';
+import { UserEntity } from '../../entities/user.entity';
 import { LoginDto } from '../../DTOs/auth/login.dto';
 import { RegistrationDto } from '../../DTOs/auth/registration.dto';
 import { ProfilesService } from '../profiles/profiles.service';
@@ -13,7 +13,7 @@ export class AuthService {
     private readonly profilesService: ProfilesService,
   ) {}
 
-  async validate({ uniq, password }: LoginDto): Promise<User | null> {
+  async validate({ uniq, password }: LoginDto): Promise<UserEntity | null> {
     let user = await this.usersService.findOne({
       where: { username: uniq },
       select: { password: true },
