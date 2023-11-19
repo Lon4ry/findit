@@ -1,5 +1,5 @@
 import { UserEntity } from '../../entities/user.entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { UpdateUserDto } from '../../DTOs/user/update-user.dto';
@@ -33,32 +33,31 @@ export class UsersService {
     return updatedUser;
   }
 
-  async remove(id: string): Promise<'Success' | 'Fail'> {
-    const user = await this.usersRepository.findOne({ where: { id: id } });
-    user.profile.profileToProjects.map(async (e) => {
-      if ('owner' in e.roles) await e.project.remove();
+  async remove(id: string): Promise<void> {
+    const user: UserEntity = await this.usersRepository.findOne({
+      where: { id: id },
+      select: ['userToProjects'],
+    });
+    user.userToProjects.map(async (e) => {
+      if (e.isOwner) await e.project.remove();
       await e.remove();
     });
-    await user.profile.remove();
     await user.remove();
-    if ((await this.usersRepository.findOne({ where: { id: id } })) === null)
-      return 'Success';
-    return 'Fail';
+    if ((await this.usersRepository.findOne({ where: { id: id } })) !== null)
+      throw new InternalServerErrorException();
   }
 
-  async findById(id: string): Promise<UserEntity | null> {
-    return await this.usersRepository.findOne({
-      where: { id: id },
-    });
-  }
-
-  async findOne(
-    options?: FindOneOptions<UserEntity>,
-  ): Promise<UserEntity | null> {
+  async findOne(options?: FindOneOptions<UserEntity>): Promise<UserEntity> {
     return await this.usersRepository.findOne(options);
   }
 
-  async findAll(options?: FindManyOptions<UserEntity>): Promise<UserEntity[]> {
-    return await this.usersRepository.find(options);
+  async find(
+    options?: FindManyOptions<UserEntity>,
+  ): Promise<{ data: UserEntity[]; length: number }> {
+    const [data, length] = await this.usersRepository.findAndCount(options);
+    return {
+      data: data,
+      length: length,
+    };
   }
 }

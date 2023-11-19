@@ -4,17 +4,23 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProfileEntity } from './profile.entity';
 import { hash } from 'bcrypt';
+import { ProjectsToUsersEntity } from './projects-to-users.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column('simple-json', { default: { type: null, expiresIn: null } })
+  subscription: { type: string; expiresIn: Date };
+
+  @Column({ select: false })
+  password: string;
 
   @Column({ unique: true })
   username: string;
@@ -22,30 +28,70 @@ export class UserEntity extends BaseEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column({ select: false })
-  password: string;
-
   @Column({ default: 'user' })
   role: string;
 
-  @Column('simple-json', { default: {} })
-  linkedAccounts: {
-    apple: string;
-    google: string;
-    yandex: string;
-    github: string;
+  @Column('simple-json', {
+    default: { apple: null, google: null, yandex: null, github: null },
+  })
+  linkedOAuth: {
+    apple: unknown;
+    google: unknown;
+    yandex: unknown;
+    github: unknown;
   };
+
+  @Column('simple-json')
+  name: {
+    firstName: string;
+    lastName: string;
+  };
+
+  @Column('simple-json', {
+    default: {
+      ProjectManagement: 0,
+      Backend: 0,
+      Frontend: 0,
+      MachineLearning: 0,
+      DevOps: 0,
+      QA: 0,
+    },
+  })
+  skills: {
+    ProjectManagement: number;
+    Backend: number;
+    Frontend: number;
+    MachineLearning: number;
+    DevOps: number;
+    QA: number;
+  };
+
+  @Column('simple-json', { default: { github: null } })
+  socialLinks: { github: string };
+
+  @Column({ nullable: true })
+  photo: string;
+
+  @Column()
+  gender: 'Male' | 'Female';
+
+  @Column({ default: '' })
+  status: string;
+
+  @Column({ nullable: true })
+  lastLogin: Date;
+
+  @Column({ default: false })
+  isLoggedIn: boolean;
+
+  @OneToMany(() => ProjectsToUsersEntity, (e) => e.project)
+  userToProjects: ProjectsToUsersEntity[];
 
   @UpdateDateColumn()
   updatedAt: Date;
 
   @CreateDateColumn({ update: false })
   createdAt: Date;
-
-  @OneToOne(() => ProfileEntity, (profile) => profile.user, {
-    cascade: true,
-  })
-  profile: ProfileEntity;
 
   @BeforeInsert()
   async hashPassword() {

@@ -1,29 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './modules/app.module';
-import { ConfigService } from '@nestjs/config';
-import session from 'express-session';
 import passport from 'passport';
+import { CorsConfig } from './configs/cors.config';
+import { sessionInstance } from './configs/session.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const configService = new ConfigService();
 
-  app.enableCors({
-    origin: configService.get('CLIENT_URL'),
-  });
+  app.enableCors(CorsConfig);
 
-  app.use(
-    session({
-      secret: configService.get('SECRET'),
-      saveUninitialized: false,
-      resave: false,
-      cookie: {
-        signed: true,
-        maxAge: 60000,
-        domain: 'localhost',
-      },
-    }),
-  );
+  app.use(sessionInstance);
 
   app.use(passport.initialize());
   app.use(passport.session());

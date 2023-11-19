@@ -10,6 +10,7 @@ export class GoogleAuthGuard extends AuthGuard('google') {
     if (request.user.type === 'User') {
       request.user = request.user.payload;
       await super.logIn(request);
+      response.redirect('/dashboard');
     } else {
       const defaultValues = request.user.payload;
       const query = defaultValues

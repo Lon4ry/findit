@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProjectsToProfilesEntity } from './projects-to-profiles.entity';
+import { ProjectsToUsersEntity } from './projects-to-users.entity';
 
 @Entity({ name: 'projects' })
 export class ProjectEntity extends BaseEntity {
@@ -20,7 +20,16 @@ export class ProjectEntity extends BaseEntity {
   @Column()
   description: string;
 
-  @Column('simple-json')
+  @Column('simple-json', {
+    default: {
+      ProjectManagement: 0,
+      Backend: 0,
+      Frontend: 0,
+      MachineLearning: 0,
+      DevOps: 0,
+      QA: 0,
+    },
+  })
   employersNeeds: {
     ProjectManagement: number;
     Backend: number;
@@ -33,12 +42,15 @@ export class ProjectEntity extends BaseEntity {
   @Column({ nullable: true })
   budget: string;
 
-  @OneToMany(() => ProjectsToProfilesEntity, (e) => e.project)
-  projectToProfiles: ProjectsToProfilesEntity[];
+  @OneToMany(() => ProjectsToUsersEntity, (e) => e.project)
+  projectToUsers: ProjectsToUsersEntity[];
 
   @UpdateDateColumn()
   updatedAt: Date;
 
   @CreateDateColumn({ update: false })
   createdAt: Date;
+
+  @Column('simple-array')
+  history: { action: string; date: Date }[];
 }

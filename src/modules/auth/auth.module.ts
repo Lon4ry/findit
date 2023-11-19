@@ -6,14 +6,15 @@ import { AuthSerializer } from './auth.serializer';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { YandexStrategy } from './strategies/yandex.strategy';
 import { GithubStrategy } from './strategies/github.strategy';
-import { ProfilesModule } from '../profiles/profiles.module';
 import { LocalStrategy } from './strategies/local.strategy';
+import { AuthGateway } from './auth.gateway';
 
 @Module({
-  imports: [UsersModule, ProfilesModule],
+  imports: [UsersModule],
   providers: [
     AuthService,
     AuthSerializer,
+    AuthGateway,
     LocalStrategy,
     // TODO: Apple auth strategy
     // AppleStrategy,

@@ -20,7 +20,10 @@ export class AuthSerializer extends PassportSerializer {
     payload: { id: string; role: string },
     done: (err: Error, user: UserEntity) => void,
   ) {
-    const user = await this.usersService.findById(payload.id);
+    const user = await this.usersService.findOne({
+      where: { id: payload.id },
+      select: ['id', 'role', 'subscription', 'username'],
+    });
     done(null, user);
   }
 }
