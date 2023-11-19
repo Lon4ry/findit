@@ -17,6 +17,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
     AuthModule,
     UsersModule,
     ProjectsModule,
+    // TODO: User notices module
+    // TODO: Projects To Users Module
     DashboardModule,
   ],
   providers: [AppGateway],
