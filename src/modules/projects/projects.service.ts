@@ -13,10 +13,15 @@ export class ProjectsService {
   async find(
     options?: FindManyOptions<ProjectEntity>,
   ): Promise<{ data: ProjectEntity[]; length: number }> {
-    const [data, length] = await this.projectsRepository.findAndCount(options);
-    return {
-      data: data,
-      length: length,
-    };
+    try {
+      const [data, length] =
+        await this.projectsRepository.findAndCount(options);
+      return {
+        data: data,
+        length: length,
+      };
+    } catch (err) {
+      console.log(err);
+    }
   }
 }

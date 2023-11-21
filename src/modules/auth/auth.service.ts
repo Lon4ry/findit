@@ -2,31 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { UserEntity } from '../../entities/user.entity';
 import { LoginDto } from '../../DTOs/auth/login.dto';
-import { RegistrationDto } from '../../DTOs/auth/registration.dto';
 import { compare } from 'bcrypt';
+import { CreateUserDto } from '../../DTOs/user/create-user.dto';
 
 @Injectable()
 export class AuthService {
   constructor(private readonly usersService: UsersService) {}
 
   async validate({ uniq, password }: LoginDto): Promise<UserEntity | null> {
-    let user = await this.usersService.findOne({
-      where: { username: uniq },
-      select: ['id', 'password'],
+    const user = await this.usersService.findOne({
+      where: [{ username: uniq }, { email: uniq }],
+      select: ['id', 'role', 'subscription', 'username', 'password'],
     });
-    user = user
-      ? user
-      : await this.usersService.findOne({
-          where: { email: uniq },
-          select: ['id', 'password'],
-        });
 
     if (!(user && (await compare(password, user.password)))) return null;
-
-    user = await this.usersService.findOne({
-      where: { id: user.id },
-      select: ['id', 'role', 'subscription', 'username'],
-    });
 
     return user;
   }
@@ -44,18 +33,16 @@ export class AuthService {
 
       case 'google':
         user = await this.usersService.findOne({
-          where: { linkedOAuth: { google: profile.id } },
+          where: [
+            { linkedOAuth: { google: profile.id } },
+            { email: profile.emails[0].value },
+          ],
           select: ['id', 'role', 'subscription', 'username', 'linkedOAuth'],
         });
-        if (!user) {
-          user = await this.usersService.findOne({
-            where: { email: profile.emails[0].value },
-            select: ['id', 'role', 'subscription', 'username', 'linkedOAuth'],
-          });
-          if (user) {
-            user.linkedOAuth.google = profile.id;
-            user = user.save();
-          }
+
+        if (!user.linkedOAuth.google) {
+          user.linkedOAuth.google = profile.id;
+          user = user.save();
         }
 
         formatted = {
@@ -70,18 +57,16 @@ export class AuthService {
 
       case 'yandex':
         user = await this.usersService.findOne({
-          where: { linkedOAuth: { yandex: profile.id } },
+          where: [
+            { linkedOAuth: { yandex: profile.id } },
+            { email: profile.emails[0].value },
+          ],
           select: ['id', 'role', 'subscription', 'username', 'linkedOAuth'],
         });
-        if (!user) {
-          user = await this.usersService.findOne({
-            where: { email: profile.emails[0].value },
-            select: ['id', 'role', 'subscription', 'username', 'linkedOAuth'],
-          });
-          if (user) {
-            user.linkedOAuth.yandex = profile.id;
-            user = user.save();
-          }
+
+        if (!user.linkedOAuth.yandex) {
+          user.linkedOAuth.yandex = profile.id;
+          user = user.save();
         }
 
         formatted = {
@@ -98,28 +83,12 @@ export class AuthService {
       case 'github':
         // TODO: Parse profile
         console.log(profile);
-        if (profile.type === 'User') {
-          user = await this.usersService.findOne({
-            where: { linkedOAuth: { github: profile.id } },
-            select: ['id', 'role', 'subscription', 'username', 'linkedOAuth'],
-          });
-          if (!user) {
-            user = await this.usersService.findOne({
-              where: { email: profile.email },
-              select: ['id', 'role', 'subscription', 'username', 'linkedOAuth'],
-            });
-            if (user) {
-              user.linkedOAuth.github = profile.id;
-              user = user.save();
-            }
-          }
 
-          formatted = {
-            username: profile.login,
-            email: profile.email,
-            linkedOAuth: { github: profile.id },
-          };
-        }
+        formatted = {
+          username: profile.login,
+          email: profile.email,
+          linkedOAuth: { github: profile.id },
+        };
         break;
     }
 
@@ -131,10 +100,10 @@ export class AuthService {
   }
 
   async register(
-    registrationDto: RegistrationDto,
+    createUserDto: CreateUserDto,
     session: Record<string, any>,
   ): Promise<void> {
-    const user: UserEntity = await this.usersService.create(registrationDto);
+    const user: UserEntity = await this.usersService.create(createUserDto);
     if (user) delete user.password;
 
     session['passport'] = {

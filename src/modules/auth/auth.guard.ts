@@ -3,14 +3,13 @@ import { Observable } from 'rxjs';
 import { Request } from 'express';
 
 @Injectable()
-export class AuthenticationGuard implements CanActivate {
+export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request: Request = context.switchToHttp().getRequest();
 
-    if (request.path.includes('auth')) return request.isUnauthenticated();
-
+    if (request.path.includes('auth')) return true;
     return request.isAuthenticated();
   }
 }

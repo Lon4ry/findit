@@ -1,10 +1,14 @@
 import { UserEntity } from '../../entities/user.entity';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { UpdateUserDto } from '../../DTOs/user/update-user.dto';
 import { CreateUserDto } from '../../DTOs/user/create-user.dto';
 import { hash } from 'bcrypt';
+import { ProjectsToUsersEntity } from '../../entities/projects-to-users.entity';
 
 @Injectable()
 export class UsersService {
@@ -14,53 +18,83 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-    const user = await this.usersRepository.create(createUserDto).save();
+    try {
+      const user: UserEntity = await this.usersRepository
+        .create(createUserDto)
+        .save();
+      delete user.password;
+      return user;
+    } catch (err) {
+      throw new UnprocessableEntityException(err);
+    }
+  }
 
-    delete user.password;
+  async update(
+    id: string,
+    key: keyof UserEntity,
+    value: never,
+  ): Promise<UserEntity> {
+    const user: UserEntity = await this.findOne({
+      where: { id: id },
+      select: ['id', key],
+    });
+
+    try {
+      if (key !== 'password') user[key] = value;
+      else user[key] = await hash(value, 10);
+      await user.save();
+    } catch (err) {
+      throw new UnprocessableEntityException(err);
+    }
 
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity> {
-    const user = await this.findOne({
+  async remove(id: string): Promise<string> {
+    const user: UserEntity = await this.findOne({
       where: { id: id },
-      select: { password: true },
+      select: ['id', 'userToProjects'],
     });
-    user.username = updateUserDto.username;
-    user.password = await hash(updateUserDto.password, 10);
-    user.email = updateUserDto.email;
-    const updatedUser = await user.save();
-    console.log(updatedUser, '(UsersService)');
-    delete updatedUser.password;
 
-    return updatedUser;
-  }
+    try {
+      user.userToProjects.map(
+        async (userToProject: ProjectsToUsersEntity): Promise<void> => {
+          if (userToProject.isOwner) await userToProject.project.remove();
+          await userToProject.remove();
+        },
+      );
+      await user.remove();
+    } catch (err) {
+      throw new UnprocessableEntityException(err);
+    }
 
-  async remove(id: string): Promise<void> {
-    const user: UserEntity = await this.usersRepository.findOne({
-      where: { id: id },
-      select: ['userToProjects'],
-    });
-    user.userToProjects.map(async (e) => {
-      if (e.isOwner) await e.project.remove();
-      await e.remove();
-    });
-    await user.remove();
-    if ((await this.usersRepository.findOne({ where: { id: id } })) !== null)
+    if ((await this.findOne({ where: { id: id }, select: ['id'] })) !== null)
       throw new InternalServerErrorException();
+
+    return id;
   }
 
   async findOne(options?: FindOneOptions<UserEntity>): Promise<UserEntity> {
-    return await this.usersRepository.findOne(options);
+    try {
+      return await this.usersRepository.findOne(options);
+    } catch (err) {
+      console.log(err);
+      throw new InternalServerErrorException();
+    }
   }
 
   async find(
     options?: FindManyOptions<UserEntity>,
   ): Promise<{ data: UserEntity[]; length: number }> {
-    const [data, length] = await this.usersRepository.findAndCount(options);
-    return {
-      data: data,
-      length: length,
-    };
+    try {
+      const [data, length] = await this.usersRepository.findAndCount(options);
+      return {
+        data: data,
+        length: length,
+      };
+    } catch (err) {
+      console.log(err);
+      throw new InternalServerErrorException();
+    }
   }
 }
