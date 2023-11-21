@@ -12,18 +12,22 @@ export class AuthService {
   async validate({ uniq, password }: LoginDto): Promise<UserEntity | null> {
     let user = await this.usersService.findOne({
       where: { username: uniq },
-      select: { password: true },
+      select: ['id', 'password'],
     });
     user = user
       ? user
       : await this.usersService.findOne({
           where: { email: uniq },
-          select: { password: true },
+          select: ['id', 'password'],
         });
 
     if (!(user && (await compare(password, user.password)))) return null;
 
-    delete user.password;
+    user = await this.usersService.findOne({
+      where: { id: user.id },
+      select: ['id', 'role', 'subscription', 'username'],
+    });
+
     return user;
   }
 
@@ -41,10 +45,12 @@ export class AuthService {
       case 'google':
         user = await this.usersService.findOne({
           where: { linkedOAuth: { google: profile.id } },
+          select: ['id', 'role', 'subscription', 'username', 'linkedOAuth'],
         });
         if (!user) {
           user = await this.usersService.findOne({
             where: { email: profile.emails[0].value },
+            select: ['id', 'role', 'subscription', 'username', 'linkedOAuth'],
           });
           if (user) {
             user.linkedOAuth.google = profile.id;
@@ -65,10 +71,12 @@ export class AuthService {
       case 'yandex':
         user = await this.usersService.findOne({
           where: { linkedOAuth: { yandex: profile.id } },
+          select: ['id', 'role', 'subscription', 'username', 'linkedOAuth'],
         });
         if (!user) {
           user = await this.usersService.findOne({
             where: { email: profile.emails[0].value },
+            select: ['id', 'role', 'subscription', 'username', 'linkedOAuth'],
           });
           if (user) {
             user.linkedOAuth.yandex = profile.id;
@@ -93,10 +101,12 @@ export class AuthService {
         if (profile.type === 'User') {
           user = await this.usersService.findOne({
             where: { linkedOAuth: { github: profile.id } },
+            select: ['id', 'role', 'subscription', 'username', 'linkedOAuth'],
           });
           if (!user) {
             user = await this.usersService.findOne({
               where: { email: profile.email },
+              select: ['id', 'role', 'subscription', 'username', 'linkedOAuth'],
             });
             if (user) {
               user.linkedOAuth.github = profile.id;
@@ -124,19 +134,25 @@ export class AuthService {
     registrationDto: RegistrationDto,
     session: Record<string, any>,
   ): Promise<void> {
-    const user = await this.usersService.create(registrationDto);
-
+    const user: UserEntity = await this.usersService.create(registrationDto);
     if (user) delete user.password;
 
-    session['passport'] = { user: { id: user.id, role: user.role } };
+    session['passport'] = {
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        subscription: user.subscription,
+      },
+    };
   }
 
   async login(id: string): Promise<void> {
     const user: UserEntity = await this.usersService.findOne({
       where: { id: id },
-      relations: ['profile'],
-      select: ['isLoggedIn'],
+      select: ['id', 'isLoggedIn'],
     });
+
     user.isLoggedIn = true;
     await user.save();
   }
@@ -144,8 +160,7 @@ export class AuthService {
   async logout(id: string): Promise<void> {
     const user: UserEntity = await this.usersService.findOne({
       where: { id: id },
-      relations: ['profile'],
-      select: ['isLoggedIn'],
+      select: ['id', 'isLoggedIn'],
     });
     user.isLoggedIn = false;
     await user.save();

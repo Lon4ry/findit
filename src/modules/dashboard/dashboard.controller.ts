@@ -11,8 +11,8 @@ export class DashboardController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Get('is-authorized')
-  async isAuthorized(): Promise<boolean> {
-    return true;
+  async isAuthorized(@User() user: UserEntity): Promise<boolean> {
+    return !!user;
   }
 
   @Get('subscription')

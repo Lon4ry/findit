@@ -32,12 +32,7 @@ export class AppGateway
       if (socket.request.isAuthenticated()) {
         next();
       } else {
-        socket.conn.close(true);
-        next(
-          new Error('Unauthorized', {
-            cause: 'User might be unauthenticated',
-          }),
-        );
+        next(new Error('Unauthorized'));
       }
     });
   }

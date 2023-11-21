@@ -16,5 +16,6 @@ export class RegistrationDto {
     DevOps: number;
     QA: number;
   };
+
   gender: 'Male' | 'Female';
 }

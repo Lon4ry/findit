@@ -94,7 +94,12 @@ export class UserEntity extends BaseEntity {
   createdAt: Date;
 
   @BeforeInsert()
-  async hashPassword() {
+  async hashPassword(): Promise<void> {
     this.password = await hash(this.password, 10);
+  }
+
+  @BeforeInsert()
+  async parseUsername(): Promise<void> {
+    this.username = this.username.toLowerCase();
   }
 }

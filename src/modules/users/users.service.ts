@@ -14,8 +14,11 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-    const user = this.usersRepository.create(createUserDto);
-    return await user.save();
+    const user = await this.usersRepository.create(createUserDto).save();
+
+    delete user.password;
+
+    return user;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity> {
