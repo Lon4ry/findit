@@ -3,6 +3,7 @@ import { ProjectEntity } from '../../entities/project.entity';
 import { User } from '../../decorators/user.decorator';
 import { UserEntity } from '../../entities/user.entity';
 import { DashboardService } from './dashboard.service';
+import { NoticeEntity } from '../../entities/notice.entity';
 
 @Controller('api/dashboard')
 export class DashboardController {
@@ -19,7 +20,7 @@ export class DashboardController {
   async notices(
     @Query() query: Record<string, any>,
     @User() user: UserEntity,
-  ): Promise<null> {
+  ): Promise<{ data: NoticeEntity[]; length: number }> {
     return await this.dashboardService.getNotices(user.id, query);
   }
 

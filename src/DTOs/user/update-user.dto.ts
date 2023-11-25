@@ -1,7 +1,7 @@
+import { UserEntity } from '../../entities/user.entity';
+
 export class UpdateUserDto {
-  username: string;
-
-  email: string;
-
-  password: string;
+  id: string;
+  key: keyof UserEntity;
+  value: never;
 }

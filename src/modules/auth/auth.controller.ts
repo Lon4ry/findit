@@ -12,9 +12,9 @@ import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { GithubAuthGuard } from './guards/github-auth.guard';
 import { AppleAuthGuard } from './guards/apple-auth.guard';
 import { YandexAuthGuard } from './guards/yandex-auth.guard';
-import { RegistrationDto } from '../../DTOs/auth/registration.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
+import { CreateUserDto } from '../../DTOs/user/create-user.dto';
 
 @Controller('api/auth')
 export class AuthController {
@@ -27,10 +27,10 @@ export class AuthController {
 
   @Post('registration')
   async registration(
-    @Body() registrationDto: RegistrationDto,
+    @Body() createUserDto: CreateUserDto,
     @Session() session: Record<string, any>,
   ): Promise<void> {
-    return await this.authService.register(registrationDto, session);
+    return await this.authService.register(createUserDto, session);
   }
 
   @Get('oauth/apple-auth')

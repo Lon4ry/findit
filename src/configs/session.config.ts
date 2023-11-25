@@ -6,7 +6,7 @@ const sessionConfig: SessionOptions = {
   resave: false,
   cookie: {
     signed: true,
-    maxAge: 60000,
+    maxAge: 1000 * 60 * 60 * 24,
     domain: 'localhost',
   },
 };

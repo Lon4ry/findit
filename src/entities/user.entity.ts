@@ -1,4 +1,5 @@
 import {
+  AfterUpdate,
   BaseEntity,
   BeforeInsert,
   Column,
@@ -10,6 +11,7 @@ import {
 } from 'typeorm';
 import { hash } from 'bcrypt';
 import { ProjectsToUsersEntity } from './projects-to-users.entity';
+import { NoticeEntity } from './notice.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity extends BaseEntity {
@@ -18,6 +20,9 @@ export class UserEntity extends BaseEntity {
 
   @Column('simple-json', { default: { type: null, expiresIn: null } })
   subscription: { type: string; expiresIn: Date };
+
+  @Column('simple-array', { default: [] })
+  history: { action: string; date: Date }[];
 
   @Column({ select: false })
   password: string;
@@ -78,11 +83,21 @@ export class UserEntity extends BaseEntity {
   @Column({ default: '' })
   status: string;
 
-  @Column({ nullable: true })
-  lastLogin: Date;
+  @Column('simple-json', {
+    default: {
+      isLoggedIn: false,
+      lastLogin: null,
+      history: [],
+    },
+  })
+  authLogs: {
+    isLoggedIn: boolean;
+    lastLogin: Date;
+    history: { ip: string; strategy: string; success: boolean; date: Date }[];
+  };
 
-  @Column({ default: false })
-  isLoggedIn: boolean;
+  @OneToMany(() => NoticeEntity, (e) => e.user)
+  notices: NoticeEntity;
 
   @OneToMany(() => ProjectsToUsersEntity, (e) => e.project)
   userToProjects: ProjectsToUsersEntity[];
@@ -101,5 +116,14 @@ export class UserEntity extends BaseEntity {
   @BeforeInsert()
   async parseUsername(): Promise<void> {
     this.username = this.username.toLowerCase();
+  }
+
+  @AfterUpdate()
+  async checkAuthLogs(): Promise<void> {
+    if (this.authLogs.history.length > 10) {
+      this.authLogs.history = this.authLogs.history.slice(
+        this.authLogs.history.length - 10,
+      );
+    }
   }
 }

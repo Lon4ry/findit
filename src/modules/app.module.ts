@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
 import { AppGateway } from './app.gateway';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { NoticesModule } from './notices/notices.module';
+import { ProjectsToUsersModule } from './projects-to-users/projects-to-users.module';
 
 @Module({
   imports: [
@@ -16,9 +18,9 @@ import { DashboardModule } from './dashboard/dashboard.module';
     TypeOrmModule.forRootAsync(TypeOrmConfigAsync),
     AuthModule,
     UsersModule,
+    NoticesModule,
     ProjectsModule,
-    // TODO: User notices module
-    // TODO: Projects To Users Module
+    ProjectsToUsersModule,
     DashboardModule,
   ],
   providers: [AppGateway],

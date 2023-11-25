@@ -9,12 +9,15 @@ import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CreateUserDto } from '../../DTOs/user/create-user.dto';
 import { hash } from 'bcrypt';
 import { ProjectsToUsersEntity } from '../../entities/projects-to-users.entity';
+import { UpdateUserDto } from '../../DTOs/user/update-user.dto';
+import { ProjectsToUsersService } from '../projects-to-users/projects-to-users.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly usersRepository: Repository<UserEntity>,
+    private readonly projectsToUsersService: ProjectsToUsersService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
@@ -29,11 +32,7 @@ export class UsersService {
     }
   }
 
-  async update(
-    id: string,
-    key: keyof UserEntity,
-    value: never,
-  ): Promise<UserEntity> {
+  async update({ id, key, value }: UpdateUserDto): Promise<UserEntity> {
     const user: UserEntity = await this.findOne({
       where: { id: id },
       select: ['id', key],

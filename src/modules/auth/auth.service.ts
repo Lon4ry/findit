@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { UserEntity } from '../../entities/user.entity';
-import { LoginDto } from '../../DTOs/auth/login.dto';
+import { AuthDto } from '../../DTOs/auth.dto';
 import { compare } from 'bcrypt';
 import { CreateUserDto } from '../../DTOs/user/create-user.dto';
 
@@ -9,15 +9,41 @@ import { CreateUserDto } from '../../DTOs/user/create-user.dto';
 export class AuthService {
   constructor(private readonly usersService: UsersService) {}
 
-  async validate({ uniq, password }: LoginDto): Promise<UserEntity | null> {
+  async validate({ uniq, password }: AuthDto): Promise<UserEntity | null> {
     const user = await this.usersService.findOne({
       where: [{ username: uniq }, { email: uniq }],
-      select: ['id', 'role', 'subscription', 'username', 'password'],
+      select: [
+        'id',
+        'role',
+        'subscription',
+        'username',
+        'password',
+        'authLogs',
+      ],
     });
 
-    if (!(user && (await compare(password, user.password)))) return null;
+    if (user) {
+      if (!(await compare(password, user.password)))
+        user.authLogs.history.push({
+          ip: '',
+          strategy: 'local',
+          success: false,
+          date: new Date(),
+        });
+      else
+        user.authLogs.history.push({
+          ip: '',
+          strategy: 'local',
+          success: true,
+          date: new Date(),
+        });
 
-    return user;
+      await user.save();
+
+      return user.authLogs.history[user.authLogs.history.length - 1].success
+        ? user
+        : null;
+    } else return null;
   }
 
   async oauthValidate(
@@ -37,13 +63,17 @@ export class AuthService {
             { linkedOAuth: { google: profile.id } },
             { email: profile.emails[0].value },
           ],
-          select: ['id', 'role', 'subscription', 'username', 'linkedOAuth'],
+          select: [
+            'id',
+            'role',
+            'subscription',
+            'username',
+            'linkedOAuth',
+            'authLogs',
+          ],
         });
 
-        if (!user.linkedOAuth.google) {
-          user.linkedOAuth.google = profile.id;
-          user = user.save();
-        }
+        if (!user.linkedOAuth.google) user.linkedOAuth.google = profile.id;
 
         formatted = {
           email: profile.emails[0].value,
@@ -61,13 +91,17 @@ export class AuthService {
             { linkedOAuth: { yandex: profile.id } },
             { email: profile.emails[0].value },
           ],
-          select: ['id', 'role', 'subscription', 'username', 'linkedOAuth'],
+          select: [
+            'id',
+            'role',
+            'subscription',
+            'username',
+            'linkedOAuth',
+            'authLogs',
+          ],
         });
 
-        if (!user.linkedOAuth.yandex) {
-          user.linkedOAuth.yandex = profile.id;
-          user = user.save();
-        }
+        if (!user.linkedOAuth.yandex) user.linkedOAuth.yandex = profile.id;
 
         formatted = {
           email: profile.emails[0].value,
@@ -92,7 +126,16 @@ export class AuthService {
         break;
     }
 
-    if (user) delete user.password;
+    if (user) {
+      user.authLogs.history.push({
+        ip: '',
+        strategy: profile.provider,
+        success: true,
+        date: new Date(),
+      });
+      user.save();
+      delete user.password;
+    }
 
     return user
       ? { type: 'User', payload: user }
@@ -119,19 +162,29 @@ export class AuthService {
   async login(id: string): Promise<void> {
     const user: UserEntity = await this.usersService.findOne({
       where: { id: id },
-      select: ['id', 'isLoggedIn'],
+      select: ['id', 'authLogs'],
     });
 
-    user.isLoggedIn = true;
+    user.authLogs = {
+      ...user.authLogs,
+      isLoggedIn: true,
+    };
+
     await user.save();
   }
 
   async logout(id: string): Promise<void> {
     const user: UserEntity = await this.usersService.findOne({
       where: { id: id },
-      select: ['id', 'isLoggedIn'],
+      select: ['id', 'authLogs'],
     });
-    user.isLoggedIn = false;
+
+    user.authLogs = {
+      ...user.authLogs,
+      isLoggedIn: false,
+      lastLogin: new Date(),
+    };
+
     await user.save();
   }
 }

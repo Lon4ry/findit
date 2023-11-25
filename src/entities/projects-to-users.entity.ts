@@ -13,13 +13,18 @@ export class ProjectsToUsersEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ default: false })
   isOwner: boolean;
 
   @Column()
-  status: 'userInvited' | 'userRequested' | 'userJoined';
+  status:
+    | 'userInvited'
+    | 'userRequested'
+    | 'userJoined'
+    | 'userRejected'
+    | 'userRemoved';
 
-  @Column('simple-array')
+  @Column('simple-array', { default: [] })
   permissions: string[];
 
   @ManyToOne(() => UserEntity, (e) => e.userToProjects)

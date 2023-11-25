@@ -51,6 +51,6 @@ export class ProjectEntity extends BaseEntity {
   @CreateDateColumn({ update: false })
   createdAt: Date;
 
-  @Column('simple-array')
+  @Column('simple-array', { default: [] })
   history: { action: string; date: Date }[];
 }
