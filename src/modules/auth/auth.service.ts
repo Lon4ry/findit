@@ -53,11 +53,13 @@ export class AuthService {
     let formatted = null;
 
     switch (profile.provider) {
-      case 'apple': // TODO: Apple validating
+      case 'apple': {
+        // TODO: Apple validating
         console.log(profile);
         break;
+      }
 
-      case 'google':
+      case 'google': {
         user = await this.usersService.findOne({
           where: [
             { linkedOAuth: { google: profile.id } },
@@ -84,8 +86,8 @@ export class AuthService {
           },
         };
         break;
-
-      case 'yandex':
+      }
+      case 'yandex': {
         user = await this.usersService.findOne({
           where: [
             { linkedOAuth: { yandex: profile.id } },
@@ -113,8 +115,8 @@ export class AuthService {
           gender: profile.gender,
         };
         break;
-
-      case 'github':
+      }
+      case 'github': {
         // TODO: Parse profile
         console.log(profile);
 
@@ -124,6 +126,7 @@ export class AuthService {
           linkedOAuth: { github: profile.id },
         };
         break;
+      }
     }
 
     if (user) {
@@ -161,7 +164,7 @@ export class AuthService {
 
   async login(id: string): Promise<void> {
     const user: UserEntity = await this.usersService.findOne({
-      where: { id: id },
+      where: { id },
       select: ['id', 'authLogs'],
     });
 
@@ -175,7 +178,7 @@ export class AuthService {
 
   async logout(id: string): Promise<void> {
     const user: UserEntity = await this.usersService.findOne({
-      where: { id: id },
+      where: { id },
       select: ['id', 'authLogs'],
     });
 

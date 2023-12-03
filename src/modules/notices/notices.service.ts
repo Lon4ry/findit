@@ -23,6 +23,31 @@ export class NoticesService {
     }
   }
 
+  async remove(notice: NoticeEntity): Promise<string> {
+    try {
+      if (notice.removedAt === null) await notice.softRemove();
+      else await notice.remove();
+    } catch (err) {
+      throw new UnprocessableEntityException(err);
+    }
+
+    if (
+      (notice.removedAt === null &&
+        (
+          await this.findOne({
+            where: { id: notice.id },
+            select: ['id', 'removedAt'],
+          })
+        ).removedAt === null) ||
+      (notice.removedAt !== null &&
+        (await this.findOne({ where: { id: notice.id }, select: ['id'] })) !==
+          null)
+    )
+      throw new InternalServerErrorException();
+
+    return notice.id;
+  }
+
   async findOne(options?: FindOneOptions<NoticeEntity>): Promise<NoticeEntity> {
     try {
       return await this.noticesRepository.findOne(options);
@@ -34,13 +59,9 @@ export class NoticesService {
 
   async find(
     options?: FindManyOptions<NoticeEntity>,
-  ): Promise<{ data: NoticeEntity[]; length: number }> {
+  ): Promise<[NoticeEntity[], number]> {
     try {
-      const [data, length] = await this.noticesRepository.findAndCount(options);
-      return {
-        data: data,
-        length: length,
-      };
+      return await this.noticesRepository.findAndCount(options);
     } catch (err) {
       console.log(err);
       throw new InternalServerErrorException();

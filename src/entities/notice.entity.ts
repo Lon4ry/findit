@@ -2,6 +2,7 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -21,6 +22,9 @@ export class NoticeEntity extends BaseEntity {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @DeleteDateColumn()
+  removedAt: Date;
 
   @ManyToOne(() => UserEntity, (e) => e.notices)
   user: UserEntity;

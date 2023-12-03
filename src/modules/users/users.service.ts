@@ -34,7 +34,7 @@ export class UsersService {
 
   async update({ id, key, value }: UpdateUserDto): Promise<UserEntity> {
     const user: UserEntity = await this.findOne({
-      where: { id: id },
+      where: { id },
       select: ['id', key],
     });
 
@@ -46,12 +46,14 @@ export class UsersService {
       throw new UnprocessableEntityException(err);
     }
 
+    if (key === 'password') delete user.password;
+
     return user;
   }
 
   async remove(id: string): Promise<string> {
     const user: UserEntity = await this.findOne({
-      where: { id: id },
+      where: { id },
       select: ['id', 'userToProjects'],
     });
 
@@ -67,7 +69,7 @@ export class UsersService {
       throw new UnprocessableEntityException(err);
     }
 
-    if ((await this.findOne({ where: { id: id }, select: ['id'] })) !== null)
+    if ((await this.findOne({ where: { id }, select: ['id'] })) !== null)
       throw new InternalServerErrorException();
 
     return id;
