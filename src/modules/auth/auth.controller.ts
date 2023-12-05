@@ -8,13 +8,13 @@ import {
   Session,
   UseGuards,
 } from '@nestjs/common';
-import { GoogleAuthGuard } from './guards/google-auth.guard';
-import { GithubAuthGuard } from './guards/github-auth.guard';
-import { AppleAuthGuard } from './guards/apple-auth.guard';
-import { YandexAuthGuard } from './guards/yandex-auth.guard';
-import { LocalAuthGuard } from './guards/local-auth.guard';
+import { CreateUserDto } from '../../dto/user/create-user.dto';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from '../../DTOs/user/create-user.dto';
+import { AppleAuthGuard } from './guards/apple-auth.guard';
+import { GithubAuthGuard } from './guards/github-auth.guard';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { YandexAuthGuard } from './guards/yandex-auth.guard';
 
 @Controller('api/auth')
 export class AuthController {

@@ -1,15 +1,15 @@
-import { UserEntity } from '../../entities/user.entity';
 import {
   Injectable,
   InternalServerErrorException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
-import { CreateUserDto } from '../../DTOs/user/create-user.dto';
 import { hash } from 'bcrypt';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { CreateUserDto } from '../../dto/user/create-user.dto';
+import { UpdateUserDto } from '../../dto/user/update-user.dto';
 import { ProjectsToUsersEntity } from '../../entities/projects-to-users.entity';
-import { UpdateUserDto } from '../../DTOs/user/update-user.dto';
+import { UserEntity } from '../../entities/user.entity';
 import { ProjectsToUsersService } from '../projects-to-users/projects-to-users.service';
 
 @Injectable()
