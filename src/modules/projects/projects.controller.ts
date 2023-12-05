@@ -1,8 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
-import { ProjectsService } from './projects.service';
-import { UserEntity } from '../../entities/user.entity';
-import { User } from '../../decorators/user.decorator';
+import { User } from '../../decorators/http/user.decorator';
 import { ProjectEntity } from '../../entities/project.entity';
+import { UserEntity } from '../../entities/user.entity';
+import { ProjectsService } from './projects.service';
 
 @Controller('api/projects')
 export class ProjectsController {

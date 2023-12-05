@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './modules/app.module';
 import passport from 'passport';
 import { CorsConfig } from './configs/cors.config';
 import { sessionInstance } from './configs/session.config';
+import { AppModule } from './modules/app.module';
 import { AuthGuard } from './modules/auth/auth.guard';
 
 async function bootstrap() {

@@ -1,29 +1,45 @@
-import { ConnectedSocket, WebSocketGateway } from '@nestjs/websockets';
+import {
+  ConnectedSocket,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
+import { User } from 'src/decorators/websocket/user.decorator';
 import { CorsConfig } from '../../configs/cors.config';
-import { AppGateway } from '../app.gateway';
-import { Socket } from 'socket.io';
-import { AuthService } from './auth.service';
 import { UserEntity } from '../../entities/user.entity';
+import { AppGateway } from '../app.gateway';
+import { AuthService } from './auth.service';
 
 @WebSocketGateway({ namespace: 'auth', cors: CorsConfig })
-export class AuthGateway extends AppGateway {
+export class AuthGateway
+  extends AppGateway
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   constructor(private readonly authService: AuthService) {
     super();
   }
 
-  async handleConnection(
-    @ConnectedSocket() client: Socket & { request: { user: UserEntity } },
-  ): Promise<void> {
-    const user = client.request.user;
-    await this.authService.login(user.id);
-    console.log(`${user.username} (${client.id}) logged in`);
+  async afterInit(server: Server): Promise<void> {
+    super.afterInit(server);
   }
 
-  async handleDisconnect(
-    @ConnectedSocket() client: Socket & { request: { user: UserEntity } },
+  @SubscribeMessage('connection')
+  async handleConnection(
+    @ConnectedSocket() client: Socket,
+    @User() user: UserEntity,
   ): Promise<void> {
-    const user = client.request.user;
+    await this.authService.login(user.id);
+    console.log(`${user.username} logged in`);
+  }
+
+  @SubscribeMessage('disconnect')
+  async handleDisconnect(
+    @ConnectedSocket() client: Socket,
+    @User() user: UserEntity,
+  ): Promise<void> {
     await this.authService.logout(user.id);
-    console.log(`${user.username} (${client.id}) logged out`);
+    console.log(`${user.username} logged out`);
   }
 }
