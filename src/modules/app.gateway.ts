@@ -7,7 +7,7 @@ import passport from 'passport';
 import { Server, Socket } from 'socket.io';
 import { authMiddleware } from 'src/middlewares/websocket/auth.middleware';
 import { CorsConfig } from '../configs/cors.config';
-import { sessionInstance } from '../configs/session.config';
+import { sessionInstance } from '../configs/session.instance';
 
 @WebSocketGateway({ cors: CorsConfig })
 export class AppGateway implements OnGatewayInit {
